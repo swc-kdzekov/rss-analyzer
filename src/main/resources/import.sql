@@ -1,0 +1,5 @@
+--insert into HOT_RSS (ID, RSS_ID, ELEMENT, FREQUENCY) values(1, 'rss1', 'element1', 5);
+--insert into HOT_RSS (ID, RSS_ID, ELEMENT, FREQUENCY) values(2, 'rss2', 'element2', 4);
+--insert into HOT_RSS (ID, RSS_ID, ELEMENT, FREQUENCY) values(3, 'rss3', 'element3', 3);
+--insert into HOT_RSS (ID, RSS_ID, ELEMENT, FREQUENCY) values(4, 'rss4', 'element4', 2);
+--insert into HOT_RSS (ID, RSS_ID, ELEMENT, FREQUENCY) values(5, 'rss5', 'element5', 51);
