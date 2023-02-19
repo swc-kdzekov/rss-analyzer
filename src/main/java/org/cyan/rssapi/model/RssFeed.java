@@ -1,12 +1,14 @@
 package org.cyan.rssapi.model;
 
 import java.util.List;
+import java.util.Set;
 
 import com.sun.syndication.feed.synd.SyndEntry;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
-@AllArgsConstructor @Getter
+@Builder(toBuilder = true)
+@Getter
 public class RssFeed {
 
     private String title;
@@ -14,4 +16,5 @@ public class RssFeed {
     private String description;
 
     private List<SyndEntry> entries;
+    private Set<String> keyWords;
 }

@@ -3,8 +3,13 @@ package org.cyan.rssapi.service;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -15,55 +20,127 @@ import com.sun.syndication.io.XmlReader;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.cyan.rssapi.exceptions.UrlsArgumentException;
 import org.cyan.rssapi.model.HotRss;
+import org.cyan.rssapi.model.MatchedElementInfo;
 import org.cyan.rssapi.model.RssFeed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+//TODO
+//Write tests for the class
 @Service
 public class RssService {
 
     @Autowired
     private JpaRssRepository jpaRssRepository;
 
-    public List<String> getMostFrequentTopics(String id){
-        HotRss hrss = new HotRss("rss7", "element7", 88);
-        jpaRssRepository.save(hrss);
-
-        hrss = new HotRss("rss7", "element77", 56);
-        jpaRssRepository.save(hrss);
-
-        hrss = new HotRss("rss2", "element25", 2);
-        jpaRssRepository.save(hrss);
-
+    //TODO
+    //Do LIMIT within SQL
+    public List<String> getMostFrequentTopics(String id) {
         List<HotRss> rssList = jpaRssRepository.findTopRssTopicsById(id, Sort.by(Sort.Direction.DESC, "frequency"));
-        return rssList.stream().map(el -> el.getElement()+": "+el.getFrequency()).collect(Collectors.toList());
+        //check if the length of list is at least 3
+        return rssList.subList(0, 3).stream().map(el -> el.getElement() + ": " + el.getFrequency()).collect(Collectors.toList());
     }
 
-    public void analyzeRssFeeds(String[] urls) throws IOException, FeedException {
-        List<RssFeed> listRssFeed = new ArrayList<>();
-        for(String url:urls){
+    //TODO
+    //Code refactor
+    public String analyzeRssFeeds(String[] urls) throws IOException, FeedException {
+
+        Map<String, MatchedElementInfo> matchedElements = new HashMap<>();
+
+        RssFeed[] arrayRssFeed = new RssFeed[urls.length];
+        int index = 0;
+        for (String url : urls) {
             RssFeed rssFeed = parseRssFeed(url);
-            listRssFeed.add(rssFeed);
+            arrayRssFeed[index] = rssFeed;
+            index++;
         }
-        String test = "test";
+
+        for (int i = 0; i < arrayRssFeed.length - 1; i++) {
+            findMatchingElements(arrayRssFeed[i], arrayRssFeed, i+1, matchedElements);
+        }
+
+        return storeMatchingElements(matchedElements);
+    }
+
+    private String storeMatchingElements(Map<String, MatchedElementInfo> matchedElements) {
+        UUID uuid = UUID.randomUUID();
+
+        matchedElements.entrySet().forEach(me -> {
+            HotRss hotRss = new HotRss(uuid.toString(), me.getKey(), me.getValue().getFrequency());
+            jpaRssRepository.save(hotRss);
+        });
+
+        return uuid.toString();
+    }
+
+    private void findMatchingElements(
+            RssFeed rssFeedPrev,
+            RssFeed[] arrayRssFeed,
+            int index,
+            Map<String, MatchedElementInfo> matchedElements
+    ) {
+
+        Map<String, Integer> wordFrequency = new HashMap<>();
+        for (int j = index; j < arrayRssFeed.length; j++) {
+            RssFeed rssFeedNext = arrayRssFeed[j];
+            for (String kWord : rssFeedPrev.getKeyWords()) {
+                if (rssFeedNext.getKeyWords().contains(kWord) && !matchedElements.keySet().contains(kWord)){
+                    //TODO
+                    //Wait for the answer (or think?) if the frequency needs to be calculated by the appearance in the entries separately
+                    int frequency = 1;
+                    if (wordFrequency.get(kWord)!=null){
+                        frequency = wordFrequency.get(kWord);
+                    }
+                    wordFrequency.put(kWord, frequency+1);
+                }
+            }
+        }
+
+        //TODO
+        //Implement logic for: find the entry(item) in 'rssFeedPrev' where the news appears and get the details: title, link, description(?)
+        wordFrequency.entrySet().forEach(el -> {
+            matchedElements.put(el.getKey(), new MatchedElementInfo(el.getKey(), el.getValue()));
+        });
     }
 
     private RssFeed parseRssFeed(String url) throws IOException, FeedException {
         URL feedSource = new URL(url);
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed = input.build(new XmlReader(feedSource));
-        List<SyndEntry> entries = feed.getEntries();
-        return new RssFeed(feed.getTitle(), feed.getLink(), feed.getDescription(), entries);
+        Set<String> keyWords = parseKeyWords(feed.getEntries());
+        return RssFeed.builder()
+                .title(feed.getTitle())
+                .link(feed.getLink())
+                .description(feed.getDescription())
+                .keyWords(keyWords)
+                .build();
+    }
+
+    private Set<String> parseKeyWords(List<SyndEntry> entries) {
+        Set<String> kWords = new HashSet<>();
+        entries.forEach(entry -> {
+
+            String title = entry.getTitle();
+            String[] tWords = title.split("[\\s,.\"\']+");
+            Arrays.stream(tWords).forEach(word -> {
+                if ((word.matches("[a-zA-Z]+")) && word.length() > 3) {
+                    kWords.add(word.toLowerCase());
+                }
+            });
+        });
+        return kWords;
     }
 
     public void validateResource(String[] urls) throws MalformedURLException {
 
-        if (urls.length < 2) throw new UrlsArgumentException("Please provide more RSS resources!");
+        if (urls.length < 2) {
+            throw new UrlsArgumentException("Please provide more RSS resources!");
+        }
 
-        for (String url:urls){
-            if (!isValidURL(url)){
-                throw new UrlsArgumentException("Not valid Url resource: '"+url+"'!");
+        for (String url : urls) {
+            if (!isValidURL(url)) {
+                throw new UrlsArgumentException("Not valid Url resource: '" + url + "'!");
             }
         }
     }
