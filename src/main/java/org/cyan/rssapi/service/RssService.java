@@ -23,6 +23,8 @@ import org.cyan.rssapi.model.HotRss;
 import org.cyan.rssapi.model.MatchedElementInfo;
 import org.cyan.rssapi.model.RssFeed;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -34,12 +36,14 @@ public class RssService {
     @Autowired
     private JpaRssRepository jpaRssRepository;
 
-    //TODO
-    //Do LIMIT within SQL
+    private static final int NUMBER_OF_TOP_NEWS = 3;
+    private static final String DELIMITER_REGEX = "[\\s,.\"\']+";
+    private static final String WORD_REGEX = "[a-zA-Z]+";
+
     public List<String> getMostFrequentTopics(String id) {
-        List<HotRss> rssList = jpaRssRepository.findTopRssTopicsById(id, Sort.by(Sort.Direction.DESC, "frequency"));
-        //check if the length of list is at least 3
-        return rssList.subList(0, 3).stream().map(el -> el.getElement() + ": " + el.getFrequency()).collect(Collectors.toList());
+        Pageable sortedByFrequency = PageRequest.of(0, NUMBER_OF_TOP_NEWS, Sort.by("frequency").descending());
+        List<HotRss> rssList = jpaRssRepository.findTopRssTopicsById(id, sortedByFrequency);
+        return rssList.stream().map(el -> el.getElement() + ": " + el.getFrequency()).collect(Collectors.toList());
     }
 
     //TODO
@@ -57,7 +61,7 @@ public class RssService {
         }
 
         for (int i = 0; i < arrayRssFeed.length - 1; i++) {
-            findMatchingElements(arrayRssFeed[i], arrayRssFeed, i+1, matchedElements);
+            findMatchingElements(arrayRssFeed[i], arrayRssFeed, i + 1, matchedElements);
         }
 
         return storeMatchingElements(matchedElements);
@@ -85,14 +89,14 @@ public class RssService {
         for (int j = index; j < arrayRssFeed.length; j++) {
             RssFeed rssFeedNext = arrayRssFeed[j];
             for (String kWord : rssFeedPrev.getKeyWords()) {
-                if (rssFeedNext.getKeyWords().contains(kWord) && !matchedElements.keySet().contains(kWord)){
+                if (rssFeedNext.getKeyWords().contains(kWord) && !matchedElements.keySet().contains(kWord)) {
                     //TODO
                     //Wait for the answer (or think?) if the frequency needs to be calculated by the appearance in the entries separately
                     int frequency = 1;
-                    if (wordFrequency.get(kWord)!=null){
+                    if (wordFrequency.get(kWord) != null) {
                         frequency = wordFrequency.get(kWord);
                     }
-                    wordFrequency.put(kWord, frequency+1);
+                    wordFrequency.put(kWord, frequency + 1);
                 }
             }
         }
@@ -122,9 +126,9 @@ public class RssService {
         entries.forEach(entry -> {
 
             String title = entry.getTitle();
-            String[] tWords = title.split("[\\s,.\"\']+");
+            String[] tWords = title.split(DELIMITER_REGEX);
             Arrays.stream(tWords).forEach(word -> {
-                if ((word.matches("[a-zA-Z]+")) && word.length() > 3) {
+                if ((word.matches(WORD_REGEX)) && word.length() > 3) {
                     kWords.add(word.toLowerCase());
                 }
             });
