@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.sun.syndication.io.FeedException;
+import org.cyan.rssapi.model.HotRssResponse;
 import org.cyan.rssapi.service.RssService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,7 @@ public class RssController {
     }
 
     @GetMapping("/frequency")
-    public List<String> getMostFrequent(@RequestParam String id) {
+    public List<HotRssResponse> getMostFrequent(@RequestParam String id) {
         //Return 3 most frequent items, json object
         return rssService.getMostFrequentTopics(id);
     }

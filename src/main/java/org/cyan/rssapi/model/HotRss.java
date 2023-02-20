@@ -1,5 +1,6 @@
 package org.cyan.rssapi.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,10 +19,19 @@ public class HotRss {
 
     private int frequency;
 
-    public HotRss(String rssId, String element, int frequency) {
+
+    private String title;
+
+
+    @Column(length = 500)
+    private String reference;
+
+    public HotRss(String rssId, String element, int frequency, String title, String reference) {
         this.rssId = rssId;
         this.element = element;
         this.frequency = frequency;
+        this.title = title;
+        this.reference = reference;
     }
 
     public HotRss() {
@@ -58,5 +68,21 @@ public class HotRss {
 
     public void setFrequency(int frequency) {
         this.frequency = frequency;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 }

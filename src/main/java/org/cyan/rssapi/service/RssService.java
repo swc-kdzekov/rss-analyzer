@@ -18,7 +18,8 @@ import com.sun.syndication.io.XmlReader;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.cyan.rssapi.exceptions.UrlsArgumentException;
 import org.cyan.rssapi.model.HotRss;
-import org.cyan.rssapi.model.MatchedElementInfo;
+import org.cyan.rssapi.model.ElementInfo;
+import org.cyan.rssapi.model.HotRssResponse;
 import org.cyan.rssapi.model.RssFeed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -36,20 +37,27 @@ public class RssService {
     private JpaRssRepository jpaRssRepository;
 
     private static final int NUMBER_OF_TOP_NEWS = 3;
-    private static final String DELIMITER_REGEX = "[\\s,.\"\']+";
+    private static final String DELIMITER_REGEX = "[\\s,.\"\'’;]+";
     private static final String WORD_REGEX = "[a-zA-Z]+";
 
-    public List<String> getMostFrequentTopics(String id) {
+    public List<HotRssResponse> getMostFrequentTopics(String id) {
         Pageable sortedByFrequency = PageRequest.of(0, NUMBER_OF_TOP_NEWS, Sort.by("frequency").descending());
         List<HotRss> rssList = jpaRssRepository.findTopRssTopicsById(id, sortedByFrequency);
-        return rssList.stream().map(el -> el.getElement() + ": " + el.getFrequency()).collect(Collectors.toList());
+        return rssList.stream()
+                .map(el -> HotRssResponse.builder()
+                        .element(el.getElement())
+                        .frequency(el.getFrequency())
+                        .title(el.getTitle())
+                        .reference(el.getReference())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     //TODO
     //Code refactor
     public String analyzeRssFeeds(String[] urls) throws IOException, FeedException {
 
-        Map<String, MatchedElementInfo> matchedElements = new HashMap<>();
+        Map<String, ElementInfo> matchedElements = new HashMap<>();
 
         RssFeed[] arrayRssFeed = new RssFeed[urls.length];
         int index = 0;
@@ -66,11 +74,17 @@ public class RssService {
         return storeMatchingElements(matchedElements);
     }
 
-    private String storeMatchingElements(Map<String, MatchedElementInfo> matchedElements) {
+    private String storeMatchingElements(Map<String, ElementInfo> matchedElements) {
         UUID uuid = UUID.randomUUID();
 
         matchedElements.entrySet().forEach(me -> {
-            HotRss hotRss = new HotRss(uuid.toString(), me.getKey(), me.getValue().getFrequency());
+            HotRss hotRss = new HotRss(
+                    uuid.toString(),
+                    me.getKey(),
+                    me.getValue().getFrequency(),
+                    me.getValue().getTitle(),
+                    me.getValue().getReference()
+            );
             jpaRssRepository.save(hotRss);
         });
 
@@ -81,23 +95,28 @@ public class RssService {
             RssFeed rssFeedPrev,
             RssFeed[] arrayRssFeed,
             int index,
-            Map<String, MatchedElementInfo> matchedElements
+            Map<String, ElementInfo> matchedElements
     ) {
-        for (String kWord : rssFeedPrev.getKeyWordFrequency().keySet()) {
-            int frequency = rssFeedPrev.getKeyWordFrequency().get(kWord);
+        for (String kWord : rssFeedPrev.getKeyWordToInfo().keySet()) {
+            int frequency = rssFeedPrev.getKeyWordToInfo().get(kWord).getFrequency();
             if (matchedElements.get(kWord) != null) {
                 continue;
             }
             for (int j = index; j < arrayRssFeed.length; j++) {
                 RssFeed rssFeedNext = arrayRssFeed[j];
-                if (rssFeedNext.getKeyWordFrequency().keySet().contains(kWord)) {
+                if (rssFeedNext.getKeyWordToInfo().keySet().contains(kWord)) {
                     if (matchedElements.get(kWord) != null) {
                         frequency = matchedElements.get(kWord).getFrequency();
                     }
-                    frequency += rssFeedNext.getKeyWordFrequency().get(kWord);
-                    matchedElements.put(kWord, MatchedElementInfo.builder().word(kWord).frequency(frequency).build());
+                    frequency += rssFeedNext.getKeyWordToInfo().get(kWord).getFrequency();
+                    matchedElements.put(kWord, ElementInfo.builder().word(kWord).frequency(frequency).build());
                 }
             }
+            matchedElements.put(kWord, ElementInfo.builder()
+                    .frequency(frequency)
+                    .title(rssFeedPrev.getKeyWordToInfo().get(kWord).getTitle())
+                    .reference(rssFeedPrev.getKeyWordToInfo().get(kWord).getReference())
+                    .build());
         }
     }
 
@@ -105,29 +124,36 @@ public class RssService {
         URL feedSource = new URL(url);
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed = input.build(new XmlReader(feedSource));
-        Map<String, Integer> keyWordsFreq = parseKeyWords(feed.getEntries());
+        Map<String, ElementInfo> keyWordsToInfo = parseKeyWords(feed.getEntries());
 
         return RssFeed.builder()
                 .title(feed.getTitle())
                 .link(feed.getLink())
                 .description(feed.getDescription())
-                .keyWordFrequency(keyWordsFreq)
+                .keyWordToInfo(keyWordsToInfo)
                 .build();
     }
 
-    private Map<String, Integer> parseKeyWords(List<SyndEntry> entries) {
+    private Map<String, ElementInfo> parseKeyWords(List<SyndEntry> entries) {
 
-        Map<String, Integer> kWordFrequency = new HashMap<>();
+        Map<String, ElementInfo> kWordFrequency = new HashMap<>();
         entries.forEach(entry -> {
             String title = entry.getTitle();
+            String link = entry.getLink();
             String[] tWords = title.split(DELIMITER_REGEX);
             Arrays.stream(tWords).forEach(word -> {
                 if ((word.matches(WORD_REGEX)) && !Stopwords.isStopword(word)) {
                     if (kWordFrequency.get(word.toLowerCase()) != null) {
-                        int freq = kWordFrequency.get(word.toLowerCase());
-                        kWordFrequency.put(word.toLowerCase(), freq + 1);
+                        int freq = kWordFrequency.get(word.toLowerCase()).getFrequency();
+                        kWordFrequency.put(
+                                word.toLowerCase(),
+                                ElementInfo.builder().frequency(freq + 1).title(title).reference(link).build()
+                        );
                     } else {
-                        kWordFrequency.put(word.toLowerCase(), 1);
+                        kWordFrequency.put(
+                                word.toLowerCase(),
+                                ElementInfo.builder().frequency(1).title(title).reference(link).build()
+                        );
                     }
                 }
             });

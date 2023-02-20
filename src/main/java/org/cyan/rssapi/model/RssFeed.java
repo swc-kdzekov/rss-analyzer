@@ -2,7 +2,6 @@ package org.cyan.rssapi.model;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 import lombok.Builder;
@@ -17,6 +16,5 @@ public class RssFeed {
     private String description;
 
     private List<SyndEntry> entries;
-    private Set<String> keyWords;
-    private Map<String, Integer> keyWordFrequency;
+    private Map<String, ElementInfo> keyWordToInfo;
 }
