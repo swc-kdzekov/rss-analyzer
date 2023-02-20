@@ -1,7 +1,6 @@
 package org.cyan.rssapi.service;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -161,7 +160,7 @@ public class RssService {
         return kWordFrequency;
     }
 
-    public void validateResource(String[] urls) throws MalformedURLException {
+    public void validateResource(String[] urls) {
 
         if (urls.length < 2) {
             throw new UrlsArgumentException("Please provide more RSS resources!");
@@ -174,7 +173,7 @@ public class RssService {
         }
     }
 
-    boolean isValidURL(String url) throws MalformedURLException {
+    boolean isValidURL(String url) {
         UrlValidator validator = new UrlValidator();
         return validator.isValid(url);
     }
