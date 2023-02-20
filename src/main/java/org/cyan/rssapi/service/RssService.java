@@ -5,10 +5,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -27,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import weka.core.Stopwords;
 
 //TODO
 //Write tests for the class
@@ -84,56 +83,56 @@ public class RssService {
             int index,
             Map<String, MatchedElementInfo> matchedElements
     ) {
-
-        Map<String, Integer> wordFrequency = new HashMap<>();
-        for (int j = index; j < arrayRssFeed.length; j++) {
-            RssFeed rssFeedNext = arrayRssFeed[j];
-            for (String kWord : rssFeedPrev.getKeyWords()) {
-                if (rssFeedNext.getKeyWords().contains(kWord) && !matchedElements.keySet().contains(kWord)) {
-                    //TODO
-                    //Wait for the answer (or think?) if the frequency needs to be calculated by the appearance in the entries separately
-                    int frequency = 1;
-                    if (wordFrequency.get(kWord) != null) {
-                        frequency = wordFrequency.get(kWord);
+        for (String kWord : rssFeedPrev.getKeyWordFrequency().keySet()) {
+            int frequency = rssFeedPrev.getKeyWordFrequency().get(kWord);
+            if (matchedElements.get(kWord) != null) {
+                continue;
+            }
+            for (int j = index; j < arrayRssFeed.length; j++) {
+                RssFeed rssFeedNext = arrayRssFeed[j];
+                if (rssFeedNext.getKeyWordFrequency().keySet().contains(kWord)) {
+                    if (matchedElements.get(kWord) != null) {
+                        frequency = matchedElements.get(kWord).getFrequency();
                     }
-                    wordFrequency.put(kWord, frequency + 1);
+                    frequency += rssFeedNext.getKeyWordFrequency().get(kWord);
+                    matchedElements.put(kWord, MatchedElementInfo.builder().word(kWord).frequency(frequency).build());
                 }
             }
         }
-
-        //TODO
-        //Implement logic for: find the entry(item) in 'rssFeedPrev' where the news appears and get the details: title, link, description(?)
-        wordFrequency.entrySet().forEach(el -> {
-            matchedElements.put(el.getKey(), new MatchedElementInfo(el.getKey(), el.getValue()));
-        });
     }
 
     private RssFeed parseRssFeed(String url) throws IOException, FeedException {
         URL feedSource = new URL(url);
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed = input.build(new XmlReader(feedSource));
-        Set<String> keyWords = parseKeyWords(feed.getEntries());
+        Map<String, Integer> keyWordsFreq = parseKeyWords(feed.getEntries());
+
         return RssFeed.builder()
                 .title(feed.getTitle())
                 .link(feed.getLink())
                 .description(feed.getDescription())
-                .keyWords(keyWords)
+                .keyWordFrequency(keyWordsFreq)
                 .build();
     }
 
-    private Set<String> parseKeyWords(List<SyndEntry> entries) {
-        Set<String> kWords = new HashSet<>();
-        entries.forEach(entry -> {
+    private Map<String, Integer> parseKeyWords(List<SyndEntry> entries) {
 
+        Map<String, Integer> kWordFrequency = new HashMap<>();
+        entries.forEach(entry -> {
             String title = entry.getTitle();
             String[] tWords = title.split(DELIMITER_REGEX);
             Arrays.stream(tWords).forEach(word -> {
-                if ((word.matches(WORD_REGEX)) && word.length() > 3) {
-                    kWords.add(word.toLowerCase());
+                if ((word.matches(WORD_REGEX)) && !Stopwords.isStopword(word)) {
+                    if (kWordFrequency.get(word.toLowerCase()) != null) {
+                        int freq = kWordFrequency.get(word.toLowerCase());
+                        kWordFrequency.put(word.toLowerCase(), freq + 1);
+                    } else {
+                        kWordFrequency.put(word.toLowerCase(), 1);
+                    }
                 }
             });
         });
-        return kWords;
+        return kWordFrequency;
     }
 
     public void validateResource(String[] urls) throws MalformedURLException {
