@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -18,6 +21,8 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.cyan.rssapi.exceptions.UrlsArgumentException;
 import org.cyan.rssapi.model.HotRss;
 import org.cyan.rssapi.model.ElementInfo;
+import org.cyan.rssapi.model.HotRssDetails;
+import org.cyan.rssapi.model.HotRssRespDetail;
 import org.cyan.rssapi.model.HotRssResponse;
 import org.cyan.rssapi.model.RssFeed;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +40,9 @@ public class RssService {
     @Autowired
     private JpaRssRepository jpaRssRepository;
 
+    @Autowired
+    private JpaRssDetailsRepository jpaRssDetailsRepository;
+
     private static final int NUMBER_OF_TOP_NEWS = 3;
     private static final String DELIMITER_REGEX = "[\\s,.\"\'’;]+";
     private static final String WORD_REGEX = "[a-zA-Z]+";
@@ -46,10 +54,14 @@ public class RssService {
                 .map(el -> HotRssResponse.builder()
                         .element(el.getElement())
                         .frequency(el.getFrequency())
-                        .title(el.getTitle())
-                        .reference(el.getReference())
+                        .details(getElementDetails(id, el.getElement()))
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    private List<HotRssRespDetail> getElementDetails(String id, String element) {
+        List<HotRssDetails> rssDetails = jpaRssDetailsRepository.findTopRssTopicDetails(id, element);
+        return rssDetails.stream().map(rssD -> new HotRssRespDetail(rssD.getTitle(), rssD.getReference())).collect(Collectors.toList());
     }
 
     //TODO
@@ -77,17 +89,28 @@ public class RssService {
         UUID uuid = UUID.randomUUID();
 
         matchedElements.entrySet().forEach(me -> {
-            HotRss hotRss = new HotRss(
+            HotRss hotRss = new HotRss(uuid.toString(), me.getKey(), me.getValue().getFrequency());
+            jpaRssRepository.save(hotRss);
+            storeMatchingElementsDetails(
                     uuid.toString(),
                     me.getKey(),
-                    me.getValue().getFrequency(),
-                    me.getValue().getTitle(),
-                    me.getValue().getReference()
+                    me.getValue().getTitles(),
+                    me.getValue().getReferences()
             );
-            jpaRssRepository.save(hotRss);
         });
 
         return uuid.toString();
+    }
+
+    private void storeMatchingElementsDetails(String rssId, String element, Set<String> titles, Set<String> links) {
+
+        Iterator<String> titleIterator = titles.iterator();
+        Iterator<String> linkIterator = links.iterator();
+
+        while (titleIterator.hasNext() && linkIterator.hasNext()) {
+            HotRssDetails hotRssDetails = new HotRssDetails(rssId, element, titleIterator.next(), linkIterator.next());
+            jpaRssDetailsRepository.save(hotRssDetails);
+        }
     }
 
     private void findMatchingElements(
@@ -113,8 +136,8 @@ public class RssService {
             }
             matchedElements.put(kWord, ElementInfo.builder()
                     .frequency(frequency)
-                    .title(rssFeedPrev.getKeyWordToInfo().get(kWord).getTitle())
-                    .reference(rssFeedPrev.getKeyWordToInfo().get(kWord).getReference())
+                    .titles(rssFeedPrev.getKeyWordToInfo().get(kWord).getTitles())
+                    .references(rssFeedPrev.getKeyWordToInfo().get(kWord).getReferences())
                     .build());
         }
     }
@@ -143,15 +166,22 @@ public class RssService {
             Arrays.stream(tWords).forEach(word -> {
                 if ((word.matches(WORD_REGEX)) && !Stopwords.isStopword(word)) {
                     if (kWordFrequency.get(word.toLowerCase()) != null) {
+
+                        Set<String> titles = kWordFrequency.get(word.toLowerCase()).getTitles();
+                        titles.add(title);
+                        Set<String> references = kWordFrequency.get(word.toLowerCase()).getReferences();
+                        references.add(link);
+
                         int freq = kWordFrequency.get(word.toLowerCase()).getFrequency();
                         kWordFrequency.put(
                                 word.toLowerCase(),
-                                ElementInfo.builder().frequency(freq + 1).title(title).reference(link).build()
+                                ElementInfo.builder().frequency(freq + 1).titles(titles).references(references).build()
                         );
                     } else {
                         kWordFrequency.put(
                                 word.toLowerCase(),
-                                ElementInfo.builder().frequency(1).title(title).reference(link).build()
+                                ElementInfo.builder().frequency(1).titles(new HashSet<>(Arrays.asList(title)))
+                                        .references(new HashSet<>(Arrays.asList(link))).build()
                         );
                     }
                 }

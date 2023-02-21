@@ -1,5 +1,7 @@
 package org.cyan.rssapi.model;
 
+import java.util.Set;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,6 +10,6 @@ import lombok.Getter;
 public class ElementInfo {
     private String word;
     private int frequency;
-    private String title;
-    private String reference;
+    private Set<String> titles;
+    private Set<String> references;
 }

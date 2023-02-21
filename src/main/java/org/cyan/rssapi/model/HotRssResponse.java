@@ -1,5 +1,7 @@
 package org.cyan.rssapi.model;
 
+import java.util.List;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,6 +10,5 @@ import lombok.Getter;
 public class HotRssResponse {
     private String element;
     private Integer frequency;
-    private String title;
-    private String reference;
+    private List<HotRssRespDetail> details;
 }
