@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class RssServiceTest {
+class RssServiceMockTest {
 
     @Mock
     JpaRssRepository jpaRssRepository;
