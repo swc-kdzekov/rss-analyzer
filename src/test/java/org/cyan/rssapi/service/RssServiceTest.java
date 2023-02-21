@@ -35,5 +35,12 @@ class RssServiceTest {
             rssService.validateResource(testurls);
         });
 
+        Assertions.assertThrows(UrlsArgumentException.class, () -> {
+            String[] testurls = new String[2];
+            testurls[0] = "https://www.theguardian.com/us-news/rss";
+            testurls[1] = "http://localhost:8787";
+            rssService.validateResource(testurls);
+        });
+
     }
 }

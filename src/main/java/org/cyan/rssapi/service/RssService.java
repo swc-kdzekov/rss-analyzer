@@ -2,6 +2,7 @@ package org.cyan.rssapi.service;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,7 +26,6 @@ import org.cyan.rssapi.model.HotRssDetails;
 import org.cyan.rssapi.model.HotRssRespDetail;
 import org.cyan.rssapi.model.HotRssResponse;
 import org.cyan.rssapi.model.RssFeed;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -108,11 +108,13 @@ public class RssService {
 
         Iterator<String> titleIterator = titles.iterator();
         Iterator<String> linkIterator = links.iterator();
+        List<HotRssDetails> listHotRssDetails = new ArrayList<>();
 
         while (titleIterator.hasNext() && linkIterator.hasNext()) {
             HotRssDetails hotRssDetails = new HotRssDetails(rssId, element, titleIterator.next(), linkIterator.next());
-            jpaRssDetailsRepository.save(hotRssDetails);
+            listHotRssDetails.add(hotRssDetails);
         }
+        jpaRssDetailsRepository.saveAll(listHotRssDetails);
     }
 
     private void findMatchingElements(
@@ -144,6 +146,7 @@ public class RssService {
         }
     }
 
+    //TODO try to test this method by setting it as protected
     private RssFeed parseRssFeed(String url) throws IOException, FeedException {
         URL feedSource = new URL(url);
         SyndFeedInput input = new SyndFeedInput();
@@ -160,27 +163,27 @@ public class RssService {
 
     private Map<String, ElementInfo> parseKeyWords(List<SyndEntry> entries) {
 
-        Map<String, ElementInfo> kWordFrequency = new HashMap<>();
+        Map<String, ElementInfo> kWordElementInfo = new HashMap<>();
         entries.forEach(entry -> {
             String title = entry.getTitle();
             String link = entry.getLink();
             String[] tWords = title.split(DELIMITER_REGEX);
             Arrays.stream(tWords).forEach(word -> {
                 if ((word.matches(WORD_REGEX)) && !Stopwords.isStopword(word)) {
-                    if (kWordFrequency.get(word.toLowerCase()) != null) {
+                    if (kWordElementInfo.get(word.toLowerCase()) != null) {
 
-                        Set<String> titles = kWordFrequency.get(word.toLowerCase()).getTitles();
+                        Set<String> titles = kWordElementInfo.get(word.toLowerCase()).getTitles();
                         titles.add(title);
-                        Set<String> references = kWordFrequency.get(word.toLowerCase()).getReferences();
+                        Set<String> references = kWordElementInfo.get(word.toLowerCase()).getReferences();
                         references.add(link);
 
-                        int freq = kWordFrequency.get(word.toLowerCase()).getFrequency();
-                        kWordFrequency.put(
+                        int freq = kWordElementInfo.get(word.toLowerCase()).getFrequency();
+                        kWordElementInfo.put(
                                 word.toLowerCase(),
                                 ElementInfo.builder().frequency(freq + 1).titles(titles).references(references).build()
                         );
                     } else {
-                        kWordFrequency.put(
+                        kWordElementInfo.put(
                                 word.toLowerCase(),
                                 ElementInfo.builder().frequency(1).titles(new HashSet<>(Arrays.asList(title)))
                                         .references(new HashSet<>(Arrays.asList(link))).build()
@@ -189,7 +192,7 @@ public class RssService {
                 }
             });
         });
-        return kWordFrequency;
+        return kWordElementInfo;
     }
 
     public void validateResource(String[] urls) {
@@ -203,10 +206,26 @@ public class RssService {
                 throw new UrlsArgumentException("Not valid Url resource: '" + url + "'!");
             }
         }
+
+        for (String url : urls) {
+            if (!isValidRssResource(url)) {
+                throw new UrlsArgumentException("The provided Url resource: '" + url + "' is not valid RssFeed!");
+            }
+        }
     }
 
     private boolean isValidURL(String url) {
         UrlValidator validator = new UrlValidator();
         return validator.isValid(url);
+    }
+
+    private boolean isValidRssResource(String feedUrl) {
+        SyndFeedInput input = new SyndFeedInput();
+        try {
+            input.build(new XmlReader(new URL(feedUrl)));
+            return true;
+        } catch (IOException | FeedException e) {
+            return false;
+        }
     }
 }
