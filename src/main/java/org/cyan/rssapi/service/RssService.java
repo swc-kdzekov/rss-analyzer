@@ -37,11 +37,13 @@ import weka.core.Stopwords;
 @Service
 public class RssService {
 
-    @Autowired
     private JpaRssRepository jpaRssRepository;
-
-    @Autowired
     private JpaRssDetailsRepository jpaRssDetailsRepository;
+
+    public RssService(JpaRssRepository jpaRssRepository, JpaRssDetailsRepository jpaRssDetailsRepository){
+        this.jpaRssRepository = jpaRssRepository;
+        this.jpaRssDetailsRepository = jpaRssDetailsRepository;
+    }
 
     private static final int NUMBER_OF_TOP_NEWS = 3;
     private static final String DELIMITER_REGEX = "[\\s,.\"\'’;]+";
@@ -203,7 +205,7 @@ public class RssService {
         }
     }
 
-    boolean isValidURL(String url) {
+    private boolean isValidURL(String url) {
         UrlValidator validator = new UrlValidator();
         return validator.isValid(url);
     }
