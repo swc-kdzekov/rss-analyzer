@@ -32,8 +32,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import weka.core.Stopwords;
 
-//TODO
-//Write tests for the class
+
 @Service
 public class RssService {
 
@@ -46,7 +45,7 @@ public class RssService {
     }
 
     private static final int NUMBER_OF_TOP_NEWS = 3;
-    private static final String DELIMITER_REGEX = "[\\s,.\"\'’;]+";
+    private static final String DELIMITER_REGEX = "[\\s,.\"\'’;:]+";
     private static final String WORD_REGEX = "[a-zA-Z]+";
 
     public List<HotRssResponse> getMostFrequentTopics(String id) {
@@ -66,8 +65,6 @@ public class RssService {
         return rssDetails.stream().map(rssD -> new HotRssRespDetail(rssD.getTitle(), rssD.getReference())).collect(Collectors.toList());
     }
 
-    //TODO
-    //Code refactor
     public String analyzeRssFeeds(String[] urls) throws IOException, FeedException {
 
         Map<String, ElementInfo> matchedElements = new HashMap<>();
@@ -75,7 +72,8 @@ public class RssService {
         RssFeed[] arrayRssFeed = new RssFeed[urls.length];
         int index = 0;
         for (String url : urls) {
-            RssFeed rssFeed = parseRssFeed(url);
+            SyndFeed feed = getFeedFromUrlResource(url);
+            RssFeed rssFeed = parseRssFeed(feed);
             arrayRssFeed[index] = rssFeed;
             index++;
         }
@@ -85,6 +83,13 @@ public class RssService {
         }
 
         return storeMatchingElements(matchedElements);
+    }
+
+    private SyndFeed getFeedFromUrlResource(String url) throws FeedException, IOException {
+        URL feedSource = new URL(url);
+        SyndFeedInput input = new SyndFeedInput();
+        SyndFeed feed = input.build(new XmlReader(feedSource));
+        return feed;
     }
 
     private String storeMatchingElements(Map<String, ElementInfo> matchedElements) {
@@ -146,11 +151,7 @@ public class RssService {
         }
     }
 
-    //TODO try to test this method by setting it as protected
-    private RssFeed parseRssFeed(String url) throws IOException, FeedException {
-        URL feedSource = new URL(url);
-        SyndFeedInput input = new SyndFeedInput();
-        SyndFeed feed = input.build(new XmlReader(feedSource));
+    protected RssFeed parseRssFeed(SyndFeed feed) throws IOException, FeedException {
         Map<String, ElementInfo> keyWordsToInfo = parseKeyWords(feed.getEntries());
 
         return RssFeed.builder()

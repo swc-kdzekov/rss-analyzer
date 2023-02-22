@@ -1,0 +1,180 @@
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:media="http://search.yahoo.com/mrss/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:gml="http://www.opengis.net/gml" xmlns:taxo="http://purl.org/rss/1.0/modules/taxonomy/" xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>The Christian Science Monitor | USA</title>
+        <link>https://www.csmonitor.com</link>
+        <description>US national news from The Christian Science Monitor.</description>
+        <language>en-us</language>
+        <copyright>Christian Science Monitor. All rights reserved.</copyright>
+        <lastBuildDate>Wed, 22 Feb 2023 10:40:49 EST</lastBuildDate>
+        <ttl>300</ttl>
+        <image>
+            <title>The Christian Science Monitor | USA</title>
+            <url>https://www.csmonitor.com/extension/csm_base/design/csm_design/images/csmlogo_250x30.png</url>
+            <link>https://www.csmonitor.com</link>
+        </image>
+        <atom:link rel="self" type="application/rss+xml" href="https://rss.csmonitor.com/feeds/usa"/>
+        <item>
+            <title>Profile in courage: When Jimmy Carter saved a nuclear reactor</title>
+            <link>https://www.csmonitor.com/USA/Politics/2023/0221/Profile-in-courage-When-Jimmy-Carter-saved-a-nuclear-reactor?icid=rss</link>
+            <guid isPermaLink="false">31ccb0de80b593d07933b1d278f3b5cb</guid>
+            <description>With the former president having entered hospice, a little-known chapter from Jimmy Carter’s naval career illustrates his courage and problem-solving skills under hazardous conditions.</description>
+            <pubDate>Tue, 21 Feb 2023 16:31:00 -0500</pubDate>
+            <dc:creator>Peter Grier</dc:creator>
+            <dc:creator>Kieran Murphy</dc:creator>
+        </item>
+        <item>
+            <title>Michael Cox was beaten by Boston police. Now he leads them.</title>
+            <link>https://www.csmonitor.com/USA/Justice/2023/0221/Michael-Cox-was-beaten-by-Boston-police.-Now-he-leads-them?icid=rss</link>
+            <guid isPermaLink="false">3a11f0360685bab66dd0519efe188753</guid>
+            <description>Boston Police Commissioner Michael Cox doesn’t want to be defined by a past injustice, but by his insistence on constitutional policing today.</description>
+            <pubDate>Tue, 21 Feb 2023 14:10:41 -0500</pubDate>
+            <dc:creator>Kalpana Jain</dc:creator>
+        </item>
+        <item>
+            <title>‘You have to find the small lights’: The challenges for quake-hit Turkey</title>
+            <link>https://www.csmonitor.com/USA/Foreign-Policy/2023/0217/You-have-to-find-the-small-lights-The-challenges-for-quake-hit-Turkey?icid=rss</link>
+            <guid isPermaLink="false">cf9bfe7bd472dd61b05606fa48338dce</guid>
+            <description>The World Bank’s Alanna Simpson, who has worked on seismic risks in Turkey, speaks with the Monitor about the lessons of past quakes and the country’s response to the recent devastating temblor.</description>
+            <pubDate>Fri, 17 Feb 2023 14:59:00 -0500</pubDate>
+            <dc:creator>Sophie Hills</dc:creator>
+        </item>
+        <item>
+            <title>In politics, there are no second acts. Enter Kari Lake.</title>
+            <link>https://www.csmonitor.com/USA/Politics/2023/0217/In-politics-there-are-no-second-acts.-Enter-Kari-Lake?icid=rss</link>
+            <guid isPermaLink="false">8c15aff83a1a3334df674b6279e148ac</guid>
+            <description>One of the clearest messages to emerge from the 2022 elections was voters’ rejection of politicians who echoed former President Donald Trump’s claims of electoral fraud. Where does that leave Kari Lake?</description>
+            <pubDate>Fri, 17 Feb 2023 10:33:00 -0500</pubDate>
+            <dc:creator>Simon Montlake</dc:creator>
+        </item>
+        <item>
+            <title>Taking on Trump: How 2024 might be different from 2016</title>
+            <link>https://www.csmonitor.com/USA/Politics/2023/0216/Taking-on-Trump-How-2024-might-be-different-from-2016?icid=rss</link>
+            <guid isPermaLink="false">be11b5d9800de07c0a5dc45dd02a5b54</guid>
+            <description>A crowded GOP presidential field could help Donald Trump win the nomination again. But many factors are different – including Mr. Trump’s unique status as a “pseudo-incumbent.”</description>
+            <pubDate>Thu, 16 Feb 2023 16:08:08 -0500</pubDate>
+            <dc:creator>Linda Feldmann</dc:creator>
+        </item>
+        <item>
+            <title>Balloons and national security: What we know so far</title>
+            <link>https://www.csmonitor.com/USA/Politics/2023/0215/Balloons-and-national-security-What-we-know-so-far?icid=rss</link>
+            <guid isPermaLink="false">44a2a53586ac460687d1c33ead5b9a4a</guid>
+            <description>Here’s what we are learning about just how many foreign objects, and what type, may be routinely coming into our airspace. Is this mostly an annoyance or a real national security problem?</description>
+            <pubDate>Wed, 15 Feb 2023 17:42:26 -0500</pubDate>
+            <dc:creator>Peter Grier</dc:creator>
+            <dc:creator>Christa Case Bryant</dc:creator>
+        </item>
+        <item>
+            <title>Families are leaving public schools. How will that change education?</title>
+            <link>https://www.csmonitor.com/USA/Education/2023/0215/Families-are-leaving-public-schools.-How-will-that-change-education?icid=rss</link>
+            <guid isPermaLink="false">e55d29455ac875d57a072a52de80f016</guid>
+            <description>The pandemic led to enrollment declines in public schools across the United States. As more parents mull other options, how are districts rethinking their bottom line – and their mission? </description>
+            <pubDate>Wed, 15 Feb 2023 12:57:17 -0500</pubDate>
+            <dc:creator>Jackie Valley</dc:creator>
+        </item>
+        <item>
+            <title>Half of Americans might not trust this article, new poll finds</title>
+            <link>https://www.csmonitor.com/USA/2023/0215/Half-of-Americans-might-not-trust-this-article-new-poll-finds?icid=rss</link>
+            <guid isPermaLink="false">19c39541073de5d0c2d19a167b47824f</guid>
+            <description>A new Gallup poll finds that 50% of Americans believe national news media intentionally misinform their audience and “do not care about the best interests of readers.” The survey also found 88% of people between the ages of 18 to 25 get their news online.</description>
+            <pubDate>Wed, 15 Feb 2023 12:00:04 -0500</pubDate>
+            <dc:creator>David Bauder</dc:creator>
+        </item>
+        <item>
+            <title>Why one Arkansas town has pinned its hopes on a teen mayor</title>
+            <link>https://www.csmonitor.com/USA/Politics/2023/0214/Why-one-Arkansas-town-has-pinned-its-hopes-on-a-teen-mayor?icid=rss</link>
+            <guid isPermaLink="false">a203ea4731e03f6d59f089b794eef5c2</guid>
+            <description>Generation Z is stepping up in national politics and state legislature – and in this small Arkansas town. Instead of heading away to college, 18-year-old Jaylen Smith ran for mayor, and won.</description>
+            <pubDate>Tue, 14 Feb 2023 14:21:00 -0500</pubDate>
+            <dc:creator>Sophie Hills</dc:creator>
+        </item>
+        <item>
+            <title>Michigan State University reels, seeks answers to gunman's motive</title>
+            <link>https://www.csmonitor.com/USA/2023/0214/Michigan-State-University-reels-seeks-answers-to-gunman-s-motive?icid=rss</link>
+            <guid isPermaLink="false">44989f8384832d281569e213d1cb6d23</guid>
+            <description>A shooter opened fire on students at Michigan State University Monday night, killing three and wounding five. The shooting is the latest in a spate of deadly shootings this year in the United States.</description>
+            <pubDate>Tue, 14 Feb 2023 12:05:09 -0500</pubDate>
+            <dc:creator>Joey Cappelletti and Ken Kusmer</dc:creator>
+        </item>
+        <item>
+            <title>Nikki Haley, former Trump cabinet member, enters GOP presidential race</title>
+            <link>https://www.csmonitor.com/USA/Politics/2023/0214/Nikki-Haley-former-Trump-cabinet-member-enters-GOP-presidential-race?icid=rss</link>
+            <guid isPermaLink="false">41d6ea050a34babd72f887c7b96558c0</guid>
+            <description>Nikki Haley announced her presidential campaign on Tuesday through a tweeted video. She is the first major Republican challenger to Donald Trump for the 2024 race. If elected, she would become the first woman and person of Indian descent in the Oval Office.</description>
+            <pubDate>Tue, 14 Feb 2023 11:14:28 -0500</pubDate>
+            <dc:creator>Meg Kinnard</dc:creator>
+        </item>
+        <item>
+            <title>‘You can’t heal what you don’t reveal’: Archives as a path to justice</title>
+            <link>https://www.csmonitor.com/USA/Society/2023/0214/You-can-t-heal-what-you-don-t-reveal-Archives-as-a-path-to-justice?icid=rss</link>
+            <guid isPermaLink="false">272cfe1543e019edd4184b8ce30bf543</guid>
+            <description>How does history affect the future? The Riverside Church in New York is turning to its archival collections not only for an honest assessment of its past but also for guidance on its next steps. </description>
+            <pubDate>Tue, 14 Feb 2023 11:11:51 -0500</pubDate>
+            <dc:creator>Maisie Sparks</dc:creator>
+        </item>
+        <item>
+            <title>Who goes to jail over classified docs – and who doesn’t?</title>
+            <link>https://www.csmonitor.com/USA/Politics/2023/0213/Who-goes-to-jail-over-classified-docs-and-who-doesn-t?icid=rss</link>
+            <guid isPermaLink="false">ea6b9297a7b289259879562d61ae9b4c</guid>
+            <description>Some experts say higher-level officials are less likely to be prosecuted for mishandling secret information. Others argue it all depends on the details of the case.</description>
+            <pubDate>Mon, 13 Feb 2023 16:33:20 -0500</pubDate>
+            <dc:creator>Peter Grier</dc:creator>
+            <dc:creator>Noah Robertson</dc:creator>
+        </item>
+        <item>
+            <title>Republican campaigns increasingly aim to shape school curriculums</title>
+            <link>https://www.csmonitor.com/USA/Politics/2023/0213/Republican-campaigns-increasingly-aim-to-shape-school-curriculums?icid=rss</link>
+            <guid isPermaLink="false">8b67b05572dcfd42baace270ed520f28</guid>
+            <description>More conservative politicians are raising concerns about education and promoting a “parents’ rights” movement leading up to the 2024 presidential race. It could be an effort to win over suburban women who have left the GOP, says one political analyst.</description>
+            <pubDate>Mon, 13 Feb 2023 12:18:27 -0500</pubDate>
+            <dc:creator>Michelle L. Price</dc:creator>
+        </item>
+        <item>
+            <title>From UFOs to balloons, US on ‘heightened alert’ with air space safety</title>
+            <link>https://www.csmonitor.com/USA/Military/2023/0213/From-UFOs-to-balloons-US-on-heightened-alert-with-air-space-safety?icid=rss</link>
+            <guid isPermaLink="false">f585ec6e63d8d84616197d9c3fca5a5e</guid>
+            <description>The U.S. is now on the lookout for slower flying objects after shooting down a Chinese balloon, said the head of NORAD and U.S. Northern Command Gen. Glen VanHerck. In recent days fighter jets have targeted objects over Canada, Alaska, and Lake Huron. </description>
+            <pubDate>Mon, 13 Feb 2023 11:35:46 -0500</pubDate>
+            <dc:creator>Colleen Long, Lolita C. Baldor, and Zeke Miller</dc:creator>
+        </item>
+        <item>
+            <title>The spy balloon that gripped a nation, and how it may affect China and US</title>
+            <link>https://www.csmonitor.com/USA/Military/2023/0210/The-spy-balloon-that-gripped-a-nation-and-how-it-may-affect-China-and-US?icid=rss</link>
+            <guid isPermaLink="false">27a57bca7421dba8c419a7ffbc1619ab</guid>
+            <description>U.S. officials are revealing what they’ve learned about China’s espionage aims and its use of seemingly low-tech balloon surveillance.</description>
+            <pubDate>Fri, 10 Feb 2023 17:00:06 -0500</pubDate>
+            <dc:creator>Peter Grier</dc:creator>
+        </item>
+        <item>
+            <title>Inclusion on the field: US women's soccer makes diversity a priority</title>
+            <link>https://www.csmonitor.com/USA/Society/2023/0210/Inclusion-on-the-field-US-women-s-soccer-makes-diversity-a-priority?icid=rss</link>
+            <guid isPermaLink="false">ad24b0e097e0d6686e1272e267edf252</guid>
+            <description>Women’s soccer in the United States has historically included rosters made up of mostly white players. Crystal Dunn, a Black defender on the U.S. national team, says there has been a gradual improvement in representation, but more is needed.</description>
+            <pubDate>Fri, 10 Feb 2023 12:14:44 -0500</pubDate>
+            <dc:creator>Anne M. Peterson</dc:creator>
+        </item>
+        <item>
+            <title>Parties, merch, and joy: An underdog city gears up for the Super Bowl</title>
+            <link>https://www.csmonitor.com/USA/Society/2023/0210/Parties-merch-and-joy-An-underdog-city-gears-up-for-the-Super-Bowl?icid=rss</link>
+            <guid isPermaLink="false">58d95414525f7a5334c864a7e792b838</guid>
+            <description>What happens when a city that contends with an “underdog” label has a football team headed to the Super Bowl? </description>
+            <pubDate>Fri, 10 Feb 2023 09:40:00 -0500</pubDate>
+            <dc:creator>Ira Porter</dc:creator>
+        </item>
+        <item>
+            <title>Peace through strength? US rattles China with new defenses near Taiwan.</title>
+            <link>https://www.csmonitor.com/USA/Military/2023/0209/Peace-through-strength-US-rattles-China-with-new-defenses-near-Taiwan?icid=rss</link>
+            <guid isPermaLink="false">034b9ed669f2a20713beb4c74513f610</guid>
+            <description>The announced return of U.S. military forces to the Philippines comes at a time of rising U.S.-China tensions. Will it ease the risk of war?</description>
+            <pubDate>Thu, 09 Feb 2023 17:05:00 -0500</pubDate>
+            <dc:creator>Anna Mulrine Grobe</dc:creator>
+        </item>
+        <item>
+            <title>Post-pandemic learning includes fewer students. Where are they?</title>
+            <link>https://www.csmonitor.com/USA/Education/2023/0209/Post-pandemic-learning-includes-fewer-students.-Where-are-they?icid=rss</link>
+            <guid isPermaLink="false">5dbf15cd1eb8ee7c65eea91499bb6c5e</guid>
+            <description>An estimated 230,000 students are considered “missing” from public school. Pandemic-era online classes made learning hard, but ongoing challenges led some students out of the system completely.</description>
+            <pubDate>Thu, 09 Feb 2023 15:30:00 -0500</pubDate>
+            <dc:creator>Bianca Vázquez Toness and Sharon Lurye</dc:creator>
+        </item>
+    </channel>
+</rss>
