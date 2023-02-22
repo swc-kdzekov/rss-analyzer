@@ -215,7 +215,7 @@ public class RssService {
 
         for (String url : urls) {
             if (!isValidURL(url)) {
-                throw new UrlsArgumentException("Not valid Url resource: '" + url + "'!");
+                throw new UrlsArgumentException("Not valid Url address: '" + url + "'!");
             }
         }
 
