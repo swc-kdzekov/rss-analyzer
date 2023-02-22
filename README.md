@@ -2,7 +2,7 @@
 
 RSS feed analyser
 
-This Rest API service analyses rss feeds (given as Url resources) and returns the top three hot topics based on the matching between the feeds.
+This Rest API service analyses rss feeds (given as Url resources) and returns the top three hot topics based on their matching between the feeds, and the frequency of their appearance.
 For that purpose there are two end-points: '*/rss/analyse/new*', and '*/rss/frequency*'. 
 The first end-point takes rss feed urls, analyses the content, and stores the results in the in-memory database. In the end, it returns a unique identifier under which the analysed data is stored
 The second end-point gets this unique identifier as argument, and returns the top three hot topic with it's frequency of appearance and all the resources where it apeared.
