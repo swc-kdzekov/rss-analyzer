@@ -87,8 +87,7 @@ public class RssService {
     private SyndFeed getFeedFromUrlResource(String url) throws FeedException, IOException {
         URL feedSource = new URL(url);
         SyndFeedInput input = new SyndFeedInput();
-        SyndFeed feed = input.build(new XmlReader(feedSource));
-        return feed;
+        return input.build(new XmlReader(feedSource));
     }
 
     private String storeMatchingElements(Map<String, ElementInfo> matchedElements) {
