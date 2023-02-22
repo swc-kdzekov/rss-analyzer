@@ -16,6 +16,19 @@ curl --location --request POST 'http://{host}:post/rss/analyse/new?urls=url1,url
 Example:
 
 ```
-curl --location --request POST 'http://localhost:8080/rss/analyse/new?urls=https%3A%2F%2Fwww.theguardian.com%2Fus-news%2Frss%2Chttps%3A%2F%2Fnews.google.com%2Fnews%3Fcf%3Dall%2526hl%3Den%2526pz%3D1%2526ned%3Dus%2526output%3Drss%2Chttps%3A%2F%2Fmoxie.foxnews.com%2Fgoogle-publisher%2Fpolitics.xml%2Chttps%3A%2F%2Frss.csmonitor.com%2Ffeeds%2Fusa%2Chttps%3A%2F%2Ffeeds.nbcnews.com%2Fnbcnews%2Fpublic%2Fpolitics'
+curl --location --request POST 'http://localhost:8080/rss/analyse/new?urls=https://www.theguardian.com/us-news/rss,https://news.google.com/news?cf=all%26hl=en%26pz=1%26ned=us%26output=rss'
 ```
 
+As a result of the execution, if there are matchings, the endpoint stores the analysed data and returns a unique identifier. In the following API call this identifier is used as an input argument in order to get the most frequent (or hot) rss topics.
+
+The call for the second end-point:
+
+```
+curl --location 'http://{host}:{port}/rss/frequency?id=unique_identifier'
+```
+
+Example:
+
+```
+curl --location 'http://localhost:8080/rss/frequency?id=9ffdf5c0-6512-458b-9b2a-aae0b6617902'
+```
