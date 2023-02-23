@@ -28,6 +28,9 @@ class RssServiceMockTest {
 
     @Mock
     JpaRssDetailsRepository jpaRssDetailsRepository;
+
+    @Mock
+    FeedProvider feedProvider;
     @InjectMocks
     RssService rssService;
 

@@ -35,10 +35,12 @@ public class RssService {
 
     private JpaRssRepository jpaRssRepository;
     private JpaRssDetailsRepository jpaRssDetailsRepository;
+    private FeedProvider feedProvider;
 
-    public RssService(JpaRssRepository jpaRssRepository, JpaRssDetailsRepository jpaRssDetailsRepository) {
+    public RssService(JpaRssRepository jpaRssRepository, JpaRssDetailsRepository jpaRssDetailsRepository, FeedProvider feedProvider) {
         this.jpaRssRepository = jpaRssRepository;
         this.jpaRssDetailsRepository = jpaRssDetailsRepository;
+        this.feedProvider = feedProvider;
     }
 
     private static final int NUMBER_OF_TOP_NEWS = 3;
@@ -71,7 +73,7 @@ public class RssService {
         RssFeed[] arrayRssFeed = new RssFeed[urls.length];
         int index = 0;
         for (String url : urls) {
-            SyndFeed feed = getFeedFromUrlResource(url);
+            SyndFeed feed = feedProvider.getFeedFromUrlResource(url);
             RssFeed rssFeed = parseRssFeed(feed);
             arrayRssFeed[index] = rssFeed;
             index++;
@@ -82,12 +84,6 @@ public class RssService {
         }
 
         return storeMatchingElements(matchedElements);
-    }
-
-    private SyndFeed getFeedFromUrlResource(String url) throws FeedException, IOException {
-        URL feedSource = new URL(url);
-        SyndFeedInput input = new SyndFeedInput();
-        return input.build(new XmlReader(feedSource));
     }
 
     private String storeMatchingElements(Map<String, ElementInfo> matchedElements) {

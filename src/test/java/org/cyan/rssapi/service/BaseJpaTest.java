@@ -1,12 +1,23 @@
 package org.cyan.rssapi.service;
 
+import static org.mockito.Mockito.doReturn;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.io.FeedException;
+import com.sun.syndication.io.SyndFeedInput;
+import com.sun.syndication.io.XmlReader;
 import org.cyan.rssapi.model.HotRss;
 import org.cyan.rssapi.model.HotRssDetails;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
@@ -14,14 +25,24 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class BaseJpaTest {
 
     @Autowired
-    private JpaRssRepository jpaRssRepository;
+    protected JpaRssRepository jpaRssRepository;
     @Autowired
-    private JpaRssDetailsRepository jpaRssDetailsRepository;
+    protected JpaRssDetailsRepository jpaRssDetailsRepository;
+    @Mock
+    protected FeedProvider feedProvider;
+
+    protected String testUrl1 = "https://www.rsshost1.com/test1/rss";
+
+    protected String testUrl2 = "https://www.rsshost2.com/test2/rss";
 
 
     @BeforeEach
-    void init() {
-       insertData();
+    void init() throws FeedException, IOException {
+        insertData();
+
+        doReturn(getTestFeed("test-match-feed1.xml")).when(feedProvider).getFeedFromUrlResource(testUrl1);
+
+        doReturn(getTestFeed("test-match-feed2.xml")).when(feedProvider).getFeedFromUrlResource(testUrl2);
     }
 
     @AfterEach
@@ -79,5 +100,12 @@ public class BaseJpaTest {
                 "biden-reference3"
         );
         jpaRssDetailsRepository.save(hotRssDetails);
+    }
+
+    private SyndFeed getTestFeed(String rssFileName) throws IOException, FeedException {
+        InputStream resource = new ClassPathResource(rssFileName).getInputStream();
+        SyndFeedInput input = new SyndFeedInput();
+        SyndFeed feed = input.build(new XmlReader(resource));
+        return feed;
     }
 }

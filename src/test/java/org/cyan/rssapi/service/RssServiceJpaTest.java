@@ -1,7 +1,9 @@
 package org.cyan.rssapi.service;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.sun.syndication.io.FeedException;
 import org.cyan.rssapi.model.HotRssRespDetail;
 import org.cyan.rssapi.model.HotRssResponse;
 import org.junit.jupiter.api.Assertions;
@@ -34,6 +36,22 @@ public class RssServiceJpaTest extends BaseJpaTest {
         Assertions.assertTrue(listHotRss.get(0).getDetails().contains(new HotRssRespDetail("biden-title1", "biden-reference1")));
         Assertions.assertTrue(listHotRss.get(0).getDetails().contains(new HotRssRespDetail("biden-title2", "biden-reference2")));
         Assertions.assertFalse(listHotRss.get(0).getDetails().contains(new HotRssRespDetail("biden-title3", "biden-reference3")));
+    }
+
+    @Test
+    void testAnalyzeRssFeeds() throws FeedException, IOException {
+            String[] urls = new String[2];
+            urls[0] = testUrl1;
+            urls[1] = testUrl2;
+
+            RssService rssService1 = new RssService(jpaRssRepository, jpaRssDetailsRepository, feedProvider);
+            String uniqId = rssService1.analyzeRssFeeds(urls);
+            List<HotRssResponse> listHotRss = rssService1.getMostFrequentTopics(uniqId);
+
+            Assertions.assertEquals(3, listHotRss.size());
+            Assertions.assertEquals("court", listHotRss.get(0).getElement());
+
+            Assertions.assertEquals(6, listHotRss.get(0).getDetails().size());
     }
 
 }
