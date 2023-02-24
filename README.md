@@ -11,7 +11,7 @@ The call for the first end-point:
 
 
 ```
-curl --location --request POST 'http://{host}:post/rss/analyse/new?urls=url1,url2,..urln'
+curl --location --request POST 'http://{host}:{port}/rss/analyse/new?urls=url1,url2,..urln'
 ```
 
 Example:
@@ -38,3 +38,4 @@ Example:
 ```
 curl --location 'http://localhost:8080/rss/frequency?id=9ffdf5c0-6512-458b-9b2a-aae0b6617902'
 ```
+
