@@ -6,11 +6,11 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import org.cyan.rssapi.model.RssFeed;
 import org.cyan.rssapi.service.RssParser;
 
-public class FeedCallable implements Callable<RssFeed> {
+public class ParseFeedCallable implements Callable<RssFeed> {
 
     private SyndFeed feed;
 
-    public FeedCallable(SyndFeed feed) {
+    public ParseFeedCallable(SyndFeed feed) {
         this.feed = feed;
     }
 

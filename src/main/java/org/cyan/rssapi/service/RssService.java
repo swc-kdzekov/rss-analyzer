@@ -19,7 +19,7 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.cyan.rssapi.callable.FeedCallable;
+import org.cyan.rssapi.callable.ParseFeedCallable;
 import org.cyan.rssapi.exceptions.UrlsArgumentException;
 import org.cyan.rssapi.model.HotRss;
 import org.cyan.rssapi.model.ElementInfo;
@@ -79,8 +79,8 @@ public class RssService {
 
             SyndFeed feed = feedProvider.getFeedFromUrlResource(url);
 
-            FeedCallable fc = new FeedCallable(feed);
-            final Future<RssFeed> future = executor.submit(fc);
+            ParseFeedCallable parseCall = new ParseFeedCallable(feed);
+            final Future<RssFeed> future = executor.submit(parseCall);
             arrayFutures[index]=future;
 
             index++;
