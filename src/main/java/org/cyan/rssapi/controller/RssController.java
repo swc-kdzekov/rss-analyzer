@@ -2,6 +2,7 @@ package org.cyan.rssapi.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import com.sun.syndication.io.FeedException;
 import org.cyan.rssapi.model.HotRssResponse;
@@ -21,7 +22,8 @@ public class RssController {
     private RssService rssService;
 
     @PostMapping("/analyse/new")
-    public String analyzeRssResources(@RequestParam String[] urls) throws FeedException, IOException {
+    public String analyzeRssResources(@RequestParam String[] urls)
+            throws FeedException, IOException, ExecutionException, InterruptedException {
         rssService.validateResource(urls);
         return rssService.analyzeRssFeeds(urls);
     }

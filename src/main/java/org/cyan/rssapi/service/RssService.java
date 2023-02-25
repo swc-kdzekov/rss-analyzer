@@ -3,20 +3,23 @@ package org.cyan.rssapi.service;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.cyan.rssapi.callable.FeedCallable;
 import org.cyan.rssapi.exceptions.UrlsArgumentException;
 import org.cyan.rssapi.model.HotRss;
 import org.cyan.rssapi.model.ElementInfo;
@@ -28,7 +31,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import weka.core.Stopwords;
 
 @Service
 public class RssService {
@@ -42,10 +44,7 @@ public class RssService {
         this.jpaRssDetailsRepository = jpaRssDetailsRepository;
         this.feedProvider = feedProvider;
     }
-
     private static final int NUMBER_OF_TOP_NEWS = 3;
-    private static final String DELIMITER_REGEX = "[\\s,.\"\'’;:]+";
-    private static final String WORD_REGEX = "[a-zA-Z]+";
 
     public List<HotRssResponse> getMostFrequentTopics(String id) {
         Pageable sortedByFrequency = PageRequest.of(0, NUMBER_OF_TOP_NEWS, Sort.by("frequency").descending());
@@ -66,21 +65,32 @@ public class RssService {
                 .collect(Collectors.toList());
     }
 
-    public String analyzeRssFeeds(String[] urls) throws IOException, FeedException {
+    public String analyzeRssFeeds(String[] urls)
+            throws IOException, FeedException, ExecutionException, InterruptedException {
 
         Map<String, ElementInfo> matchedElements = new HashMap<>();
 
-        RssFeed[] arrayRssFeed = new RssFeed[urls.length];
+        ExecutorService executor = Executors.newFixedThreadPool(urls.length);
+
+        Future<RssFeed>[] arrayFutures = new Future[urls.length];
+
         int index = 0;
         for (String url : urls) {
+
             SyndFeed feed = feedProvider.getFeedFromUrlResource(url);
-            RssFeed rssFeed = parseRssFeed(feed);
-            arrayRssFeed[index] = rssFeed;
+
+            FeedCallable fc = new FeedCallable(feed);
+            final Future<RssFeed> future = executor.submit(fc);
+            arrayFutures[index]=future;
+
             index++;
         }
 
-        for (int i = 0; i < arrayRssFeed.length - 1; i++) {
-            findMatchingElements(arrayRssFeed[i], arrayRssFeed, i + 1, matchedElements);
+        executor.shutdown();
+        while (!executor.isTerminated()) {}
+
+        for (int i = 0; i < arrayFutures.length - 1; i++) {
+            findMatchingElements(arrayFutures[i], arrayFutures, i + 1, matchedElements);
         }
 
         return storeMatchingElements(matchedElements);
@@ -117,23 +127,23 @@ public class RssService {
     }
 
     private void findMatchingElements(
-            RssFeed rssFeedPrev,
-            RssFeed[] arrayRssFeed,
+            Future<RssFeed> rssFeedPrev,
+            Future<RssFeed>[] arrayRssFeed,
             int index,
             Map<String, ElementInfo> matchedElements
-    ) {
-        for (String kWord : rssFeedPrev.getKeyWordToInfo().keySet()) {
+    ) throws ExecutionException, InterruptedException {
+        for (String kWord : rssFeedPrev.get().getKeyWordToInfo().keySet()) {
 
             boolean matched = false;
-            int frequency = rssFeedPrev.getKeyWordToInfo().get(kWord).getFrequency();
-            List<String> titles = new ArrayList<>(rssFeedPrev.getKeyWordToInfo().get(kWord).getTitles());
-            List<String> references = new ArrayList<>(rssFeedPrev.getKeyWordToInfo().get(kWord).getReferences());
+            int frequency = rssFeedPrev.get().getKeyWordToInfo().get(kWord).getFrequency();
+            List<String> titles = new ArrayList<>(rssFeedPrev.get().getKeyWordToInfo().get(kWord).getTitles());
+            List<String> references = new ArrayList<>(rssFeedPrev.get().getKeyWordToInfo().get(kWord).getReferences());
 
             if (matchedElements.get(kWord) != null) {
                 continue;
             }
             for (int j = index; j < arrayRssFeed.length; j++) {
-                RssFeed rssFeedNext = arrayRssFeed[j];
+                RssFeed rssFeedNext = arrayRssFeed[j].get();
                 if (rssFeedNext.getKeyWordToInfo().keySet().contains(kWord)) {
                     matched = true;
                     if (matchedElements.get(kWord) != null) {
@@ -156,51 +166,6 @@ public class RssService {
                 );
             }
         }
-    }
-
-    protected RssFeed parseRssFeed(SyndFeed feed) {
-        Map<String, ElementInfo> keyWordsToInfo = parseKeyWords(feed.getEntries());
-
-        return RssFeed.builder()
-                .title(feed.getTitle())
-                .link(feed.getLink())
-                .description(feed.getDescription())
-                .keyWordToInfo(keyWordsToInfo)
-                .build();
-    }
-
-    private Map<String, ElementInfo> parseKeyWords(List<SyndEntry> entries) {
-
-        Map<String, ElementInfo> kWordElementInfo = new HashMap<>();
-        entries.forEach(entry -> {
-            String title = entry.getTitle();
-            String link = entry.getLink();
-            String[] tWords = title.split(DELIMITER_REGEX);
-            Arrays.stream(tWords).forEach(word -> {
-                if ((word.matches(WORD_REGEX)) && !Stopwords.isStopword(word)) {
-                    if (kWordElementInfo.get(word.toLowerCase()) != null) {
-
-                        List<String> titles = new ArrayList<>(kWordElementInfo.get(word.toLowerCase()).getTitles());
-                        titles.add(title);
-                        List<String> references = new ArrayList<>(kWordElementInfo.get(word.toLowerCase()).getReferences());
-                        references.add(link);
-
-                        int freq = kWordElementInfo.get(word.toLowerCase()).getFrequency();
-                        kWordElementInfo.put(
-                                word.toLowerCase(),
-                                ElementInfo.builder().frequency(freq + 1).titles(titles).references(references).build()
-                        );
-                    } else {
-                        kWordElementInfo.put(
-                                word.toLowerCase(),
-                                ElementInfo.builder().frequency(1).titles(Arrays.asList(title))
-                                        .references(Arrays.asList(link)).build()
-                        );
-                    }
-                }
-            });
-        });
-        return kWordElementInfo;
     }
 
     public void validateResource(String[] urls) {

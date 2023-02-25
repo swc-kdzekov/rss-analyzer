@@ -2,6 +2,7 @@ package org.cyan.rssapi.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import com.sun.syndication.io.FeedException;
 import org.cyan.rssapi.model.HotRssRespDetail;
@@ -39,7 +40,7 @@ public class RssServiceJpaTest extends BaseJpaTest {
     }
 
     @Test
-    void testAnalyzeRssFeeds() throws FeedException, IOException {
+    void testAnalyzeRssFeeds() throws FeedException, IOException, ExecutionException, InterruptedException {
             String[] urls = new String[2];
             urls[0] = testUrl1;
             urls[1] = testUrl2;
