@@ -86,14 +86,18 @@ public class RssService {
             index++;
         }
 
-        executor.shutdown();
-        while (!executor.isTerminated()) {}
+        shutDownAndWaitTasksComplete(executor);
 
         for (int i = 0; i < arrayFutures.length - 1; i++) {
             findMatchingElements(arrayFutures[i], arrayFutures, i + 1, matchedElements);
         }
 
         return storeMatchingElements(matchedElements);
+    }
+
+    private void shutDownAndWaitTasksComplete(ExecutorService executor) {
+        executor.shutdown();
+        while (!executor.isTerminated()) {}
     }
 
     private String storeMatchingElements(Map<String, ElementInfo> matchedElements) {
