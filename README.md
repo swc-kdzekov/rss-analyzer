@@ -39,4 +39,5 @@ Example:
 curl --location 'http://localhost:8080/rss/frequency?id=9ffdf5c0-6512-458b-9b2a-aae0b6617902'
 ```
 <br/>
+
 The branch *'rss-analyser/threads'* allows you to use Swagger-UI for interacting with the API! For that purpose you can use this reference: http://localhost:8080/swagger-ui.html
