@@ -40,4 +40,4 @@ curl --location 'http://localhost:8080/rss/frequency?id=9ffdf5c0-6512-458b-9b2a-
 ```
 <br/>
 
-**It is also possible to use Swagger-UI for interacting with the API!** For that purpose you can use this reference: http://localhost:8080/swagger-ui.html
+**It is also possible to use Swagger-UI for interaction with the API!** For that purpose you can use this reference: http://localhost:8080/swagger-ui.html
