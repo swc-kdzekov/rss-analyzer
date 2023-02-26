@@ -1,6 +1,6 @@
 # rss-analyser
 
-RSS feed analyser
+RSS feed analyser (with Swagger-UI)
 
 This Rest API service analyses rss feeds (given as Url resources) and returns the top three hot topics based on the matching between the feeds, and the frequency of their appearance.
 For that purpose there are two end-points: '*/rss/analyse/new*', and '*/rss/frequency*'. 
