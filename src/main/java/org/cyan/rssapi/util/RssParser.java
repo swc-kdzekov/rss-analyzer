@@ -1,4 +1,4 @@
-package org.cyan.rssapi.service;
+package org.cyan.rssapi.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;

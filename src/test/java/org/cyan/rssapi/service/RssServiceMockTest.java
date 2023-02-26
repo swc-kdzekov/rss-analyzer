@@ -10,6 +10,7 @@ import com.sun.syndication.io.XmlReader;
 import org.cyan.rssapi.configuraton.TestConfiguration;
 import org.cyan.rssapi.exceptions.UrlsArgumentException;
 import org.cyan.rssapi.model.RssFeed;
+import org.cyan.rssapi.util.RssParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

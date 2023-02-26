@@ -4,7 +4,7 @@ import java.util.concurrent.Callable;
 
 import com.sun.syndication.feed.synd.SyndFeed;
 import org.cyan.rssapi.model.RssFeed;
-import org.cyan.rssapi.service.RssParser;
+import org.cyan.rssapi.util.RssParser;
 
 public class ParseFeedCallable implements Callable<RssFeed> {
 
