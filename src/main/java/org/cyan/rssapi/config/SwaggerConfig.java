@@ -21,7 +21,7 @@ public class SwaggerConfig {
     @Bean
     UiConfiguration uiConfig() {
         return UiConfigurationBuilder.builder()
-                .docExpansion(DocExpansion.LIST) // or DocExpansion.NONE or DocExpansion.FULL
+                .docExpansion(DocExpansion.LIST)
                 .build();
     }
 
