@@ -17,7 +17,7 @@ curl --location --request POST 'http://{host}:post/rss/analyse/new?urls=url1,url
 Example:
 
 ```
-curl --location --request POST 'http://localhost:8080/rss/analyse/new?urls=https://www.theguardian.com/us-news/rss,https://news.google.com/news?cf=all%26hl=en%26pz=1%26ned=us%26output=rss'
+curl --location --request POST 'http://localhost:8080/rss/analyse/new?urls=https://www.theguardian.com/us-news/rss,https://feeds.nbcnews.com/nbcnews/public/politics'
 ```
 
 
