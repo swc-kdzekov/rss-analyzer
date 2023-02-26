@@ -5,17 +5,23 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
 public class HotRss {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @ApiModelProperty(notes = "Auto generated id number")
     private Long id;
 
+    @ApiModelProperty(notes = "Unique identifier for the analysis")
     private String rssId;
 
+    @ApiModelProperty(notes = "Matching element")
     private String element;
 
+    @ApiModelProperty(notes = "Frequency of the element")
     private int frequency;
 
 

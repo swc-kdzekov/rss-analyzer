@@ -6,11 +6,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
 public class HotRssDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @ApiModelProperty(notes = "Auto generated id number")
     private Long id;
 
     public HotRssDetails(String rssId, String element, String title, String reference){
@@ -24,13 +27,17 @@ public class HotRssDetails {
 
     }
 
+    @ApiModelProperty(notes = "Unique identifier for the analysis")
     private String rssId;
 
+    @ApiModelProperty(notes = "Matching element")
     private String element;
 
+    @ApiModelProperty(notes = "Title of the article")
     private String title;
 
     @Column(length = 500)
+    @ApiModelProperty(notes = "Reference to the article")
     private String reference;
 
     public Long getId() {
