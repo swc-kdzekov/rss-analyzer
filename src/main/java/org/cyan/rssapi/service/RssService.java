@@ -158,6 +158,7 @@ public class RssService {
                     references.addAll(rssFeedNext.getKeyWordToInfo().get(kWord).getReferences());
                 }
             }
+
             if (matched) {
                 matchedElements.put(
                         kWord,

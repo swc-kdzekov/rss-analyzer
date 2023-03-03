@@ -14,7 +14,6 @@ import org.cyan.rssapi.util.RssParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
@@ -32,11 +31,11 @@ class RssServiceMockTest {
 
     @Mock
     FeedProvider feedProvider;
-    @InjectMocks
-    RssService rssService;
 
     @Test
     void testValidation(){
+
+        RssService rssService = new RssService(jpaRssRepository, jpaRssDetailsRepository, feedProvider);
 
         Assertions.assertThrows(UrlsArgumentException.class, () -> {
             String[] testurls = new String[1];
